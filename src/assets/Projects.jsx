@@ -27,6 +27,22 @@ export default function Projects() {
       github: '#',
       demo: '#'
     }
+    {
+      title: 'Dharma Cipta Karya',
+      description: 'Backend for a company profile website using Django, providing an admin interface for content management and dynamic rendering of company information.',
+      image: '/img/dharma_cipta.png',
+      tags: ['react.js, django, python'],
+      github: '#',
+      demo: 'http://dharmaciptakarya.com/'
+    },
+    {
+      title: 'Favor Indonesia',
+      description: 'Developing a backend system using Python and the Django framework to manage and serve content for a company profile.',
+      image: '/img/favor_indo.png',
+      tags: ['HTML, CSS, JavaScript'],
+      github: '#',
+      demo: '#'
+    }
   ];
 
   return (
