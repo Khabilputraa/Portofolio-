@@ -26,7 +26,7 @@ export default function Projects() {
       tags: ['HTML', 'CSS', 'JavaScript'],
       github: '#',
       demo: '#'
-    }
+    },
     {
       title: 'Dharma Cipta Karya',
       description: 'Backend for a company profile website using Django, providing an admin interface for content management and dynamic rendering of company information.',
