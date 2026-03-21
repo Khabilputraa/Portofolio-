@@ -50,7 +50,7 @@ const projects = [
     title: 'Favor Indonesia',
     description: 'Backend system using Python and Django to manage and serve content for a company profile.',
     image: '/img/favor_indo.png',
-    tags: ['HTML', 'CSS', 'JavaScript'],
+    tags: ['HTML', 'CSS', 'JavaScript', 'Python', 'Django'],
     github: '#',
     demo: '#',
     index: '05',
