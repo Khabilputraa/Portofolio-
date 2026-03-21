@@ -1,98 +1,216 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import profilePhoto from '../../public/img/wisuda_khabil.jpg';
 import { Github, Linkedin, Instagram, Download } from 'lucide-react';
 
+const cyan  = '#00e5c4';
+const red   = '#ff2d55';
+const white = '#f5f0e8';
+const dim   = 'rgba(245,240,232)';
+
+const roles = ['FullStack Developer', 'Django Backend Enthusiast'];
+
 export default function Hero() {
-  const [text, setText] = useState('');
+  const [text, setText]           = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
-  const [loopNum, setLoopNum] = useState(0);
+  const [loopNum, setLoopNum]     = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(150);
+  const [visible, setVisible]     = useState(false);
+  const canvasRef = useRef(null);
 
-  const roles = ['Frontend Developer', 'Basic Backend Developer'];
+  /* reveal on mount */
+  useEffect(() => { setTimeout(() => setVisible(true), 100); }, []);
 
+  /* typewriter */
   useEffect(() => {
-    const handleType = () => {
-      const i = loopNum % roles.length;
-      const fullText = roles[i];
-
-      setText(isDeleting 
+    const i        = loopNum % roles.length;
+    const fullText = roles[i];
+    const timer = setTimeout(() => {
+      setText(isDeleting
         ? fullText.substring(0, text.length - 1)
         : fullText.substring(0, text.length + 1)
       );
-
       setTypingSpeed(isDeleting ? 50 : 150);
-
-      if (!isDeleting && text === fullText) {
-        setTimeout(() => setIsDeleting(true), 2000);
-      } else if (isDeleting && text === '') {
-        setIsDeleting(false);
-        setLoopNum(loopNum + 1);
-      }
-    };
-
-    const timer = setTimeout(handleType, typingSpeed);
+      if (!isDeleting && text === fullText) setTimeout(() => setIsDeleting(true), 2000);
+      else if (isDeleting && text === '') { setIsDeleting(false); setLoopNum(loopNum + 1); }
+    }, typingSpeed);
     return () => clearTimeout(timer);
   }, [text, isDeleting, loopNum, typingSpeed]);
-  
+
+  /* canvas particle bg */
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let W = canvas.width  = canvas.offsetWidth;
+    let H = canvas.height = canvas.offsetHeight;
+    const pts = Array.from({ length: 55 }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 1.2 + 0.3,
+    }));
+    let raf;
+    const draw = () => {
+      ctx.clearRect(0, 0, W, H);
+      pts.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > W) p.vx *= -1;
+        if (p.y < 0 || p.y > H) p.vy *= -1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,229,196,0.25)'; ctx.fill();
+      });
+      for (let i = 0; i < pts.length; i++)
+        for (let j = i + 1; j < pts.length; j++) {
+          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+          const d = Math.sqrt(dx*dx + dy*dy);
+          if (d < 110) {
+            ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.strokeStyle = `rgba(0,229,196,${0.06 * (1 - d/110)})`; ctx.lineWidth = 0.5; ctx.stroke();
+          }
+        }
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
+    const ro = new ResizeObserver(() => { W = canvas.width = canvas.offsetWidth; H = canvas.height = canvas.offsetHeight; });
+    ro.observe(canvas);
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); };
+  }, []);
+
+  const fadeStyle = (delay = 0) => ({
+    opacity: visible ? 1 : 0,
+    transform: visible ? 'none' : 'translateY(20px)',
+    transition: `opacity 0.7s ease ${delay}ms, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
+  });
+
+  const socials = [
+    { href: 'https://github.com/Khabilputraa',                         Icon: Github,    label: 'GH' },
+    { href: 'https://www.linkedin.com/in/khabil-putra-405631279/',     Icon: Linkedin,  label: 'LI' },
+    { href: 'https://www.instagram.com/khabilputraa_/',                Icon: Instagram, label: 'IG' },
+  ];
+
   return (
-    <div className="w-full flex items-center justify-center p-8">
-      <div className="w-full max-w-7xl">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <p className="text-purple-400 text-lg font-medium">Hello, I'm</p>
-              <h1 className="text-5xl md:text-7xl font-bold text-white">
-                Khabil Putra Pratama
-              </h1>
-              <p className="text-2xl md:text-3xl text-slate-300 h-10">
-                {text}
-                <span className="animate-pulse">|</span>
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              <a 
-                href="https://drive.google.com/uc?export=download&id=1dBai4jQgJAeovIirn2G8vgDuQvGZZkLG"
-                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
-                download
-              >
-                <Download size={20} />
-                Download CV
-              </a>
-            </div>
-            
-            <div className="flex gap-4 pt-4">
-              <a href="https://github.com/Khabilputraa" className="w-12 h-12 bg-slate-800 hover:bg-purple-600 rounded-lg flex items-center justify-center transition-colors">
-                <Github className="text-white" size={20} />
-              </a>
-              <a href="https://www.linkedin.com/in/khabil-putra-405631279/" className="w-12 h-12 bg-slate-800 hover:bg-purple-600 rounded-lg flex items-center justify-center transition-colors">
-                <Linkedin className="text-white" size={20} />
-              </a>
-              <a href="https://www.instagram.com/khabilputraa_/" className="w-12 h-12 bg-slate-800 hover:bg-purple-600 rounded-lg flex items-center justify-center transition-colors">
-                <Instagram className="text-white" size={20} />
-              </a>
-            </div>
+    <div style={{ background: '#050505', minHeight: '100vh', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center' }}>
+
+      {/* scanlines */}
+      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, background: 'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px)' }} />
+
+      {/* particle canvas */}
+      <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 0, opacity: 0.6 }} />
+
+      {/* ghost text */}
+      <div style={{ position: 'absolute', bottom: '-4%', left: '-2%', fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 'clamp(90px,20vw,260px)', color: 'transparent', WebkitTextStroke: '1px rgba(245,240,232,0.03)', whiteSpace: 'nowrap', userSelect: 'none', pointerEvents: 'none', letterSpacing: '-0.04em', lineHeight: 1 }}>
+        KHABIL
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: 1200, margin: '0 auto', padding: 'clamp(48px,8vw,96px) clamp(24px,6vw,80px)', display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 'clamp(32px,5vw,64px)', alignItems: 'center' }}>
+
+        {/* ── LEFT ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+
+          {/* eyebrow */}
+          <div style={{ ...fadeStyle(100), fontFamily: "'Space Mono',monospace", fontSize: 10, color: cyan, letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ display: 'inline-block', width: 20, height: 1, background: cyan }} />
+            [ 00 ] — HELLO, I'M
           </div>
-          
-          <div className="flex justify-center">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/30 to-pink-600/30 blur-3xl animate-pulse"></div>
-              <div className="absolute inset-0 bg-gradient-to-tl from-blue-600/20 to-purple-600/20 blur-2xl"></div>
-              <div className="relative w-72 h-96 md:w-80 md:h-[450px]">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-pink-600 opacity-20 rounded-3xl transform rotate-6"></div>
-                <div className="absolute inset-0 bg-gradient-to-tl from-blue-600 to-purple-600 opacity-20 rounded-3xl transform -rotate-6"></div>
-                <div className="relative w-full h-full rounded-3xl overflow-hidden border border-purple-500/30 shadow-2xl backdrop-blur-sm">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-900/80"></div>
-                  <img 
-                    src={profilePhoto} 
-                    alt="Khabil Porto" 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+
+          {/* name */}
+          <div style={{ overflow: 'hidden', marginBottom: 4 }}>
+            <h1 style={{ ...fadeStyle(250), fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 'clamp(38px,6vw,76px)', color: white, letterSpacing: '-0.03em', lineHeight: 0.92, margin: 0 }}>
+              Khabil<br />
+              Putra<br />
+              <span style={{ color: cyan }}>Pratama.</span>
+            </h1>
+          </div>
+
+          {/* typewriter role */}
+          <div style={{ ...fadeStyle(450), marginTop: 24, marginBottom: 36, height: 28, display: 'flex', alignItems: 'center', gap: 0 }}>
+            <span style={{ fontFamily: "'Space Mono',monospace", fontSize: 'clamp(11px,1.8vw,14px)', color: dim, letterSpacing: '0.12em' }}>
+              {text}
+            </span>
+            <span style={{ display: 'inline-block', width: 2, height: 16, background: cyan, marginLeft: 3, animation: 'blink 1s step-end infinite' }} />
+          </div>
+
+          {/* divider */}
+          <div style={{ ...fadeStyle(550), height: 1, background: 'rgba(245,240,232,0.08)', marginBottom: 36, width: '80%' }} />
+
+          {/* CV button */}
+          <div style={{ ...fadeStyle(650), marginBottom: 32 }}>
+            <a
+              href="https://drive.google.com/uc?export=download&id=1dBai4jQgJAeovIirn2G8vgDuQvGZZkLG"
+              download
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '13px 28px', border: `1px solid ${white}`, color: white, fontFamily: "'Space Mono',monospace", fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none', position: 'relative', overflow: 'hidden', transition: 'color 0.4s ease' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#050505'; e.currentTarget.querySelector('.fill').style.transform = 'translateX(0)'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = white; e.currentTarget.querySelector('.fill').style.transform = 'translateX(-101%)'; }}
+            >
+              <span className="fill" style={{ position: 'absolute', inset: 0, background: white, transform: 'translateX(-101%)', transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)', zIndex: 0 }} />
+              <Download size={14} style={{ position: 'relative', zIndex: 1 }} />
+              <span style={{ position: 'relative', zIndex: 1 }}>Download CV</span>
+            </a>
+          </div>
+
+          {/* social links */}
+          <div style={{ ...fadeStyle(750), display: 'flex', gap: 12 }}>
+            {socials.map(({ href, Icon, label }) => (
+              <a
+                key={label} href={href} target="_blank" rel="noopener noreferrer"
+                style={{ width: 44, height: 44, border: '1px solid rgba(245,240,232,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: dim, textDecoration: 'none', transition: 'border-color 0.3s ease, color 0.3s ease' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = cyan; e.currentTarget.style.color = cyan; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245,240,232,0.12)'; e.currentTarget.style.color = dim; }}
+              >
+                <Icon size={16} />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* ── RIGHT — photo ── */}
+        <div style={{ ...fadeStyle(400), display: 'flex', justifyContent: 'center' }}>
+          <div style={{ position: 'relative' }}>
+
+            {/* outer border box */}
+            <div style={{ position: 'absolute', inset: -14, border: `1px solid rgba(0,229,196,0.15)` }} />
+
+            {/* corner tl */}
+            <div style={{ position: 'absolute', top: -20, left: -20, width: 28, height: 28, borderTop: `2px solid ${cyan}`, borderLeft: `2px solid ${cyan}` }} />
+            {/* corner br */}
+            <div style={{ position: 'absolute', bottom: -20, right: -20, width: 28, height: 28, borderBottom: `2px solid ${cyan}`, borderRight: `2px solid ${cyan}` }} />
+            {/* corner tr */}
+            <div style={{ position: 'absolute', top: -20, right: -20, width: 28, height: 28, borderTop: `2px solid ${red}`, borderRight: `2px solid ${red}` }} />
+            {/* corner bl */}
+            <div style={{ position: 'absolute', bottom: -20, left: -20, width: 28, height: 28, borderBottom: `2px solid ${red}`, borderLeft: `2px solid ${red}` }} />
+
+            {/* image container */}
+            <div style={{ width: 'clamp(240px,28vw,320px)', height: 'clamp(300px,36vw,420px)', overflow: 'hidden', position: 'relative' }}>
+              {/* glitch overlay */}
+              <div style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none', mixBlendMode: 'color-dodge', opacity: 0.04, background: `repeating-linear-gradient(0deg, transparent, transparent 2px, ${cyan} 2px, ${cyan} 3px)` }} />
+
+              <img
+                src={profilePhoto}
+                alt="Khabil Putra Pratama"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', filter: 'contrast(1.05) brightness(0.95)', display: 'block' }}
+              />
+
+              {/* bottom fade */}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '35%', background: 'linear-gradient(to top, #050505 0%, transparent 100%)', zIndex: 1 }} />
+
+              {/* name tag */}
+              <div style={{ position: 'absolute', bottom: 16, left: 16, zIndex: 3, fontFamily: "'Space Mono',monospace", fontSize: 9, color: cyan, letterSpacing: '0.25em', textTransform: 'uppercase' }}>
+                KHABIL_PUTRA.jpg
               </div>
+            </div>
+
+            {/* scan line sweep */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 2, overflow: 'hidden', pointerEvents: 'none' }}>
+              <div style={{ position: 'absolute', left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${cyan}, transparent)`, opacity: 0.18, animation: 'scanSweep 4s linear infinite' }} />
             </div>
           </div>
         </div>
+
       </div>
+
+      <style>{`
+        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes scanSweep { from { top: -2px; } to { top: 100%; } }
+      `}</style>
     </div>
   );
 }
