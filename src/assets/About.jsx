@@ -153,14 +153,14 @@ export default function About() {
                 Passionate Web<br />Developer.
               </h3>
               <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 'clamp(10px,1.4vw,12px)', color: dimWhite, lineHeight: 2, letterSpacing: '0.05em' }}>
-                I'm a Frontend Developer who enjoys creating beautiful, responsive, and meaningful digital experiences.
-                With basic backend skills, I build applications that are not only visually appealing but also functional and reliable.
+                I’m a Fullstack Developer who enjoys creating beautiful, responsive, and meaningful digital experiences.
+                With strong frontend expertise and solid backend skills, I build applications that are not only visually appealing but also functional, scalable, and reliable.
               </p>
             </div>
 
             <p style={{ fontFamily: "'Space Mono', monospace", fontSize: 'clamp(10px,1.4vw,12px)', color: dimWhite, lineHeight: 2, letterSpacing: '0.05em', marginBottom: 40 }}>
-              I build clean, fast, and easy-to-use interfaces powered by well-structured code.
-              My goal is to deliver smooth user experiences through simple yet effective design.
+            I craft clean, fast, and intuitive interfaces powered by solid frontend and backend code.
+              My mission? To deliver seamless end-to-end experiences that are simple, effective, and a joy to use.
             </p>
 
             {/* inline stats */}
