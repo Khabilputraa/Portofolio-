@@ -32,7 +32,7 @@ const projects = [
     title: 'Rental Instrument Platform',
     description: 'Musical instrument rental platform — frontend implementation with clean, responsive UI.',
     image: '/img/Signup.png',
-    tags: ['HTML', 'CSS', 'JavaScript'],
+    tags: ['HTML', 'CSS', 'JavaScript', 'Python', 'Django'],
     github: '#',
     demo: '#',
     index: '03',
