@@ -135,7 +135,7 @@ export default function Hero() {
           {/* CV button */}
           <div style={{ ...fadeStyle(650), marginBottom: 32 }}>
             <a
-              href="https://drive.google.com/uc?export=download&id=1dBai4jQgJAeovIirn2G8vgDuQvGZZkLG"
+              href="https://drive.google.com/file/d/1MAyz5f-UinQ479gCAvJXLd1FCxFU8nwI/view?usp=sharing"
               download
               style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '13px 28px', border: `1px solid ${white}`, color: white, fontFamily: "'Space Mono',monospace", fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', textDecoration: 'none', position: 'relative', overflow: 'hidden', transition: 'color 0.4s ease' }}
               onMouseEnter={e => { e.currentTarget.style.color = '#050505'; e.currentTarget.querySelector('.fill').style.transform = 'translateX(0)'; }}
