@@ -273,7 +273,7 @@ export default function Hero() {
           {/* CV button */}
           <div style={{ ...fadeStyle(650), marginBottom: 32 }}>
             <a
-              href="https://drive.google.com/uc?export=download&id=1dBai4jQgJAeovIirn2G8vgDuQvGZZkLG"
+              href="https://drive.google.com/file/d/1IisDHd4u6q_Cqk3K5LsVhFe1mqMp1A5f/view?usp=sharing"
               download
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 10,
